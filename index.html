@@ -237,9 +237,9 @@
 </head>
 <body>
 
-    <!-- MÜZİK (müzik.mp3 olarak ayarlandı) -->
+    <!-- MÜZİK (Music.mp3 olarak ayarlandı) -->
     <audio id="bgMusic" loop preload="auto">
-        <source src="müzik.mp3" type="audio/mpeg">
+        <source src="Music.mp3" type="audio/mpeg">
     </audio>
 
     <!-- ARKA PLAN VİDEOSU -->
@@ -320,7 +320,7 @@
 
             if (music) {
                 music.play().catch(function(error) {
-                    console.log("Müzik başlatılamadı:", error);
+                    console.log("Müzik oynatılırken bir hata oluştu:", error);
                 });
             }
 
@@ -341,13 +341,11 @@
             var reopenBtn = document.getElementById('reopenBtn');
 
             if (container.style.display === 'none') {
-                // Davetiyeyi tekrar aç
                 container.style.display = 'flex';
                 overlay.style.display = 'block';
                 video.classList.remove('full-view');
                 reopenBtn.style.display = 'none';
             } else {
-                // Davetiyeyi kapat, videoyu tam ekranda aç
                 container.style.display = 'none';
                 overlay.style.display = 'none';
                 video.classList.add('full-view');
