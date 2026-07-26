@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gülin & İsmail - Düğün Davetiyesi</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --gold: #c5a059;
+            --gold-dark: #8a6d3b;
+            --cream: #faf8f5;
+            --dark-bg: #0b0b0b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--dark-bg);
+            color: #2c2c2c;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        /* Arka Plan Video */
+        .bg-video {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            opacity: 0.5;
+            filter: brightness(0.7);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(10,10,10,0.92) 100%);
+            z-index: -1;
+        }
+
+        /* Zarf Ekranı */
+        .envelope-wrapper {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            background: rgba(8, 8, 8, 0.96);
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+
+        .envelope-card {
+            width: 300px;
+            height: 220px;
+            background: linear-gradient(135deg, #ede4d8 0%, #d8caa7 100%);
+            border-radius: 12px;
+            border: 2px solid var(--gold);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .seal {
+            width: 70px;
+            height: 70px;
+            background: radial-gradient(circle, #d4af37 0%, #8a6d3b 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-family: 'Great Vibes', cursive;
+            font-size: 24px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+            border: 2px solid #fff;
+            margin-bottom: 15px;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #c5a059 0%, #8a6d3b 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-family: 'Cinzel', serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* Davetiye Kartı */
+        .invitation-card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--cream);
+            border-radius: 16px;
+            padding: 35px 25px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease 0.2s;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .invitation-card.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gold-border-frame {
+            position: absolute;
+            top: 10px; left: 10px; right: 10px; bottom: 10px;
+            border: 1px solid var(--gold);
+            border-radius: 10px;
+            pointer-events: none;
+        }
+
+        .names-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 52px;
+            color: var(--gold-dark);
+            margin: 5px 0;
+            line-height: 1.1;
+        }
+
+        .couple-photo {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 2px solid var(--gold);
+        }
+
+        .event-box {
+            background: #ffffff;
+            border: 1px solid rgba(197, 160, 89, 0.4);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 15px 0;
+        }
+
+        .btn-gold {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #c5a059 0%, #9e7d3b 100%);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .btn-group { display: flex; gap: 10px; }
+        .btn-sub {
+            flex: 1; padding: 10px; background: transparent;
+            border: 1px solid var(--gold); color: #444;
+            text-decoration: none; border-radius: 20px; font-size: 11px; text-align: center;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MÜZİK -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://files.catbox.moe/g4dp7c.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- ARKA PLAN VİDEOSU (Muted olması tarayıcı zorunluluğudur) -->
+    <video class="bg-video" id="bgVideo" loop muted playsinline webkit-playsinline preload="auto">
+        <source src="https://files.catbox.moe/lory8u.mp4" type="video/mp4">
+    </video>
+    <div class="overlay"></div>
+
+    <!-- ZARF EKRANI -->
+    <div class="envelope-wrapper" id="envelopeWrapper">
+        <div class="envelope-card">
+            <div class="seal">G & İs</div>
+            <button class="start-btn" onclick="startExperience()">DAVETİYEYİ AÇ</button>
+        </div>
+    </div>
+
+    <!-- DAVETİYE KARTI -->
+    <div class="invitation-card" id="invitationCard">
+        <div class="gold-border-frame"></div>
+
+        <p style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px; color: #555;">
+            "Ve (Allah), onların kalplerini birleştirmiştir."<br>
+            <span style="font-size: 11px; color: var(--gold-dark); font-weight: 600;">(Enfal Suresi, 63. Ayet)</span>
+        </p>
+
+        <div class="names-title">Gülin</div>
+        <div style="font-family: 'Cinzel', serif; color: #888; font-size: 16px;">&</div>
+        <div class="names-title">İsmail</div>
+
+        <img src="https://i.ibb.co/fdw39bnk/foto7.jpg" alt="Gülin & İsmail" class="couple-photo">
+
+        <div style="font-size: 12px; color: #444; margin: 15px 0; background: rgba(197,160,89,0.1); padding: 12px; border-radius: 8px;">
+            <p><strong>Gelinin Ailesi:</strong> Nermin & Erdoğan (Merhum)</p>
+            <p><strong>Damadın Ailesi:</strong> Binnur & Hüseyin</p>
+        </div>
+
+        <p style="font-family: 'Cormorant Garamond', serif; font-size: 15px; color: #333; margin: 15px 0; font-weight: 600;">
+            Bir ömür boyu sürecek mutlu beraberliğimize başlangıç diyeceğimiz bu özel günümüzde sizleri de aramızda görmekten onur duyarız.
+        </p>
+
+        <div class="event-box">
+            <div style="font-family: 'Cinzel', serif; font-size: 14px; color: var(--gold-dark); font-weight: 700;">DÜĞÜN MERASİMİ</div>
+            <div style="font-size: 14px; font-weight: 600; margin-top: 5px;">05 Eylül 2026 Cumartesi</div>
+            <div style="font-size: 12px; color: #666;">Saat: 19:00 - 23:00</div>
+            <hr style="border:0; border-top: 1px solid #eee; margin: 10px 0;">
+            <div style="font-size: 13px; font-weight: 600;">Elli4Park Tesisleri Kır Bahçesi</div>
+            <div style="font-size: 11px; color: #777;">Gazi Süleyman Paşa, Yağcılar Cd. No:270, Akyazı/Sakarya</div>
+        </div>
+
+        <a href="https://maps.app.goo.gl/yN61QTVkQ5uHJ8Dm6?g_st=ac" target="_blank" class="btn-gold">
+            📍 HARİTADA GÖR / YOL TARİFİ
+        </a>
+
+        <div class="btn-group">
+            <a href="tel:05513622561" class="btn-sub">📞 İsmail</a>
+            <a href="tel:05434672859" class="btn-sub">📞 Gülin</a>
+        </div>
+    </div>
+
+    <script>
+        function startExperience() {
+            // Medya elamanlarını al
+            var music = document.getElementById('bgMusic');
+            var video = document.getElementById('bgVideo');
+
+            // Videoyu başlat
+            if (video) {
+                video.play();
+            }
+
+            // Müziği başlat
+            if (music) {
+                music.play();
+            }
+
+            // Zarfı kapat ve davetiyeyi aç
+            document.getElementById('envelopeWrapper').style.display = 'none';
+            document.getElementById('invitationCard').classList.add('active');
+
+            // Konfeti patlat
+            confetti({
+                particleCount: 120,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+    </script>
+</body>
+</html>
