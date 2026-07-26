@@ -39,6 +39,13 @@
             z-index: 10;
             opacity: 0.5;
             filter: brightness(0.7);
+            transition: opacity 0.8s ease, filter 0.8s ease;
+        }
+
+        /* Davetiye kapatıldığında videoyu tam parlaklıkta göstermek için */
+        .bg-video.full-view {
+            opacity: 1;
+            filter: brightness(1);
         }
 
         .overlay {
@@ -105,6 +112,22 @@
             letter-spacing: 1px;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        /* Davetiye Kartı Container */
+        .invitation-container {
+            position: relative;
+            z-index: 50;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .invitation-container.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
         }
 
         /* Davetiye Kartı */
@@ -176,25 +199,63 @@
             margin-bottom: 10px;
         }
 
-        .btn-group { display: flex; gap: 10px; }
+        .btn-group { display: flex; gap: 10px; margin-bottom: 15px; }
         .btn-sub {
             flex: 1; padding: 10px; background: transparent;
             border: 1px solid var(--gold); color: #444;
             text-decoration: none; border-radius: 20px; font-size: 11px; text-align: center;
             font-weight: 600;
         }
+
+        /* Davetiye Kapat Butonu */
+        .btn-close-invitation {
+            width: 100%;
+            padding: 12px;
+            background: #222;
+            color: #fff;
+            border: 1px solid var(--gold);
+            border-radius: 25px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn-close-invitation:hover {
+            background: #000;
+        }
+
+        /* Videoyu izlerken sol üstte beliren geri açma butonu */
+        .reopen-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 60;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            border: 1px solid var(--gold);
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
     </style>
 </head>
 <body>
 
+    <!-- MÜZİK (Müzik.mp3 olarak güncellendi) -->
     <audio id="bgMusic" loop preload="auto">
-    <source src="muzik.mp3" type="audio/mpeg">
-</audio>
+        <source src="Müzik.mp3" type="audio/mpeg">
+    </audio>
 
-    <!-- ARKA PLAN VİDEOSU (Muted olması tarayıcı zorunluluğudur) -->
+    <!-- ARKA PLAN VİDEOSU -->
     <video class="bg-video" id="bgVideo" autoplay muted loop playsinline preload="auto">
-    <source src="video.mp4" type="video/mp4">
-</video>
+        <source src="video.mp4" type="video/mp4">
+    </video>
 
     <!-- ZARF EKRANI -->
     <div class="envelope-wrapper" id="envelopeWrapper">
@@ -204,75 +265,98 @@
         </div>
     </div>
 
-    <!-- DAVETİYE KARTI -->
-    <div class="invitation-card" id="invitationCard">
-        <div class="gold-border-frame"></div>
+    <!-- VİDEOYU İZLERKEN AÇILAN RE-OPEN BUTONU -->
+    <button class="reopen-btn" id="reopenBtn" onclick="toggleInvitation()">📜 Davetiyeyi Gör</button>
 
-        <p style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px; color: #555;">
-            "Ve (Allah), onların kalplerini birleştirmiştir."<br>
-            <span style="font-size: 11px; color: var(--gold-dark); font-weight: 600;">(Enfal Suresi, 63. Ayet)</span>
-        </p>
+    <!-- DAVETİYE KARTI CONTAINER -->
+    <div class="invitation-container" id="invitationContainer">
+        <div class="invitation-card" id="invitationCard">
+            <div class="gold-border-frame"></div>
 
-        <div class="names-title">Gülin</div>
-        <div style="font-family: 'Cinzel', serif; color: #888; font-size: 16px;">&</div>
-        <div class="names-title">İsmail</div>
+            <p style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px; color: #555;">
+                "Ve (Allah), onların kalplerini birleştirmiştir."<br>
+                <span style="font-size: 11px; color: var(--gold-dark); font-weight: 600;">(Enfal Suresi, 63. Ayet)</span>
+            </p>
 
-        <img src="https://i.ibb.co/fdw39bnk/foto7.jpg" alt="Gülin & İsmail" class="couple-photo">
+            <div class="names-title">Gülin</div>
+            <div style="font-family: 'Cinzel', serif; color: #888; font-size: 16px;">&</div>
+            <div class="names-title">İsmail</div>
 
-        <div style="font-size: 12px; color: #444; margin: 15px 0; background: rgba(197,160,89,0.1); padding: 12px; border-radius: 8px;">
-            <p><strong>Gelinin Ailesi:</strong> Nermin & Erdoğan (Merhum)</p>
-            <p><strong>Damadın Ailesi:</strong> Binnur & Hüseyin</p>
-        </div>
+            <img src="https://i.ibb.co/fdw39bnk/foto7.jpg" alt="Gülin & İsmail" class="couple-photo">
 
-        <p style="font-family: 'Cormorant Garamond', serif; font-size: 15px; color: #333; margin: 15px 0; font-weight: 600;">
-            Bir ömür boyu sürecek mutlu beraberliğimize başlangıç diyeceğimiz bu özel günümüzde sizleri de aramızda görmekten onur duyarız.
-        </p>
+            <div style="font-size: 12px; color: #444; margin: 15px 0; background: rgba(197,160,89,0.1); padding: 12px; border-radius: 8px;">
+                <p><strong>Gelinin Ailesi:</strong> Nermin & Erdoğan (Merhum)</p>
+                <p><strong>Damadın Ailesi:</strong> Binnur & Hüseyin</p>
+            </div>
 
-        <div class="event-box">
-            <div style="font-family: 'Cinzel', serif; font-size: 14px; color: var(--gold-dark); font-weight: 700;">DÜĞÜN MERASİMİ</div>
-            <div style="font-size: 14px; font-weight: 600; margin-top: 5px;">05 Eylül 2026 Cumartesi</div>
-            <div style="font-size: 12px; color: #666;">Saat: 19:00 - 23:00</div>
-            <hr style="border:0; border-top: 1px solid #eee; margin: 10px 0;">
-            <div style="font-size: 13px; font-weight: 600;">Elli4Park Tesisleri Kır Bahçesi</div>
-            <div style="font-size: 11px; color: #777;">Gazi Süleyman Paşa, Yağcılar Cd. No:270, Akyazı/Sakarya</div>
-        </div>
+            <p style="font-family: 'Cormorant Garamond', serif; font-size: 15px; color: #333; margin: 15px 0; font-weight: 600;">
+                Bir ömür boyu sürecek mutlu beraberliğimize başlangıç diyeceğimiz bu özel günümüzde sizleri de aramızda görmekten onur duyarız.
+            </p>
 
-        <a href="https://maps.app.goo.gl/yN61QTVkQ5uHJ8Dm6?g_st=ac" target="_blank" class="btn-gold">
-            📍 HARİTADA GÖR / YOL TARİFİ
-        </a>
+            <div class="event-box">
+                <div style="font-family: 'Cinzel', serif; font-size: 14px; color: var(--gold-dark); font-weight: 700;">DÜĞÜN MERASİMİ</div>
+                <div style="font-size: 14px; font-weight: 600; margin-top: 5px;">05 Eylül 2026 Cumartesi</div>
+                <div style="font-size: 12px; color: #666;">Saat: 19:00 - 23:00</div>
+                <hr style="border:0; border-top: 1px solid #eee; margin: 10px 0;">
+                <div style="font-size: 13px; font-weight: 600;">Elli4Park Tesisleri Kır Bahçesi</div>
+                <div style="font-size: 11px; color: #777;">Gazi Süleyman Paşa, Yağcılar Cd. No:270, Akyazı/Sakarya</div>
+            </div>
 
-        <div class="btn-group">
-            <a href="tel:05513622561" class="btn-sub">📞 İsmail</a>
-            <a href="tel:05434672859" class="btn-sub">📞 Gülin</a>
+            <a href="https://maps.app.goo.gl/yN61QTVkQ5uHJ8Dm6?g_st=ac" target="_blank" class="btn-gold">
+                📍 HARİTADA GÖR / YOL TARİFİ
+            </a>
+
+            <div class="btn-group">
+                <a href="tel:05513622561" class="btn-sub">📞 İsmail</a>
+                <a href="tel:05434672859" class="btn-sub">📞 Gülin</a>
+            </div>
+
+            <!-- DAVETİYEYİ KAPAT TUŞU -->
+            <button class="btn-close-invitation" onclick="toggleInvitation()">🎬 DAVETİYEYİ KAPAT / VİDEOYU İZLE</button>
         </div>
     </div>
 
     <script>
         function startExperience() {
-            // Medya elamanlarını al
             var music = document.getElementById('bgMusic');
             var video = document.getElementById('bgVideo');
 
-            // Videoyu başlat
             if (video) {
                 video.play();
             }
 
-            // Müziği başlat
             if (music) {
-                music.play();
+                music.play().catch(function(error) {
+                    console.log("Müzik oynatma engellendi:", error);
+                });
             }
 
-            // Zarfı kapat ve davetiyeyi aç
             document.getElementById('envelopeWrapper').style.display = 'none';
             document.getElementById('invitationCard').classList.add('active');
 
-            // Konfeti patlat
             confetti({
                 particleCount: 120,
                 spread: 70,
                 origin: { y: 0.6 }
             });
+        }
+
+        function toggleInvitation() {
+            var container = document.getElementById('invitationContainer');
+            var video = document.getElementById('bgVideo');
+            var reopenBtn = document.getElementById('reopenBtn');
+
+            if (container.classList.contains('hidden')) {
+                // Davetiyeyi tekrar aç
+                container.classList.remove('hidden');
+                video.classList.remove('full-view');
+                reopenBtn.style.display = 'none';
+            } else {
+                // Davetiyeyi gizle, videoyu öne çıkar
+                container.classList.add('hidden');
+                video.classList.add('full-view');
+                reopenBtn.style.display = 'block';
+            }
         }
     </script>
 </body>
