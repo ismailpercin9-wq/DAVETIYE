@@ -36,7 +36,7 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             object-fit: cover;
-            z-index: 10;
+            z-index: 1;
             opacity: 0.5;
             filter: brightness(0.7);
             transition: opacity 0.8s ease, filter 0.8s ease;
@@ -53,7 +53,8 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             background: radial-gradient(circle, rgba(0,0,0,0.2) 0%, rgba(10,10,10,0.92) 100%);
-            z-index: -1;
+            z-index: 2;
+            transition: opacity 0.8s ease;
         }
 
         /* Zarf Ekranı */
@@ -121,13 +122,7 @@
             width: 100%;
             display: flex;
             justify-content: center;
-            transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-
-        .invitation-container.hidden {
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(20px);
+            transition: opacity 0.6s ease;
         }
 
         /* Davetiye Kartı */
@@ -140,17 +135,12 @@
             text-align: center;
             position: relative;
             box-shadow: 0 25px 60px rgba(0,0,0,0.8);
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 1s ease 0.2s;
             margin: 20px 0;
             display: none;
         }
 
         .invitation-card.active {
             display: block;
-            opacity: 1;
-            transform: translateY(0);
         }
 
         .gold-border-frame {
@@ -207,7 +197,7 @@
             font-weight: 600;
         }
 
-        /* Davetiye Kapat Butonu */
+        /* Davetiye Kapat Tuşu */
         .btn-close-invitation {
             width: 100%;
             padding: 12px;
@@ -231,8 +221,8 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            z-index: 60;
-            background: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.8);
             color: #fff;
             border: 1px solid var(--gold);
             padding: 10px 18px;
@@ -247,15 +237,18 @@
 </head>
 <body>
 
-    <!-- MÜZİK (Müzik.mp3 olarak güncellendi) -->
+    <!-- MÜZİK (müzik.mp3 olarak ayarlandı) -->
     <audio id="bgMusic" loop preload="auto">
-        <source src="Müzik.mp3" type="audio/mpeg">
+        <source src="müzik.mp3" type="audio/mpeg">
     </audio>
 
     <!-- ARKA PLAN VİDEOSU -->
     <video class="bg-video" id="bgVideo" autoplay muted loop playsinline preload="auto">
         <source src="video.mp4" type="video/mp4">
     </video>
+
+    <!-- KARARTMA KATMANI -->
+    <div class="overlay" id="bgOverlay"></div>
 
     <!-- ZARF EKRANI -->
     <div class="envelope-wrapper" id="envelopeWrapper">
@@ -327,7 +320,7 @@
 
             if (music) {
                 music.play().catch(function(error) {
-                    console.log("Müzik oynatma engellendi:", error);
+                    console.log("Müzik başlatılamadı:", error);
                 });
             }
 
@@ -343,17 +336,20 @@
 
         function toggleInvitation() {
             var container = document.getElementById('invitationContainer');
+            var overlay = document.getElementById('bgOverlay');
             var video = document.getElementById('bgVideo');
             var reopenBtn = document.getElementById('reopenBtn');
 
-            if (container.classList.contains('hidden')) {
+            if (container.style.display === 'none') {
                 // Davetiyeyi tekrar aç
-                container.classList.remove('hidden');
+                container.style.display = 'flex';
+                overlay.style.display = 'block';
                 video.classList.remove('full-view');
                 reopenBtn.style.display = 'none';
             } else {
-                // Davetiyeyi gizle, videoyu öne çıkar
-                container.classList.add('hidden');
+                // Davetiyeyi kapat, videoyu tam ekranda aç
+                container.style.display = 'none';
+                overlay.style.display = 'none';
                 video.classList.add('full-view');
                 reopenBtn.style.display = 'block';
             }
